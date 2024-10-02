@@ -1,0 +1,39 @@
+name: Build and Push Docker Image
+
+on:
+  push:
+    branches:
+      - main
+      - feat/server
+    tags:
+      - 'v*.*.*'
+    paths-ignore:
+      - '**.md'
+  pull_request:
+    branches: ["main"]
+
+env:
+  SERVER_IMAGE_NAME: agora_openai_converse_server
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-tags: true
+          fetch-depth: "0"
+      - id: pre-step
+        shell: bash
+        run: echo "image-tag=$(git describe --tags --always)" >> $GITHUB_OUTPUT
+      - name: Build & Publish Docker Image for Server
+        uses: elgohr/Publish-Docker-Github-Action@v5
+        with:
+          name: ${{ github.repository_owner }}/${{ env.SERVER_IMAGE_NAME }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          registry: ghcr.io
+          tags: "${{ github.ref == 'refs/heads/main' && 'latest,' || '' }}${{ steps.pre-step.outputs.image-tag }}"
+          no_push: ${{ github.event_name == 'pull_request' }}

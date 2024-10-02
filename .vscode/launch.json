@@ -1,0 +1,25 @@
+{
+    "configurations": [
+        {
+            "name": "Launch Server",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "realtime_agent.main",
+            "args": [
+                "server"
+            ],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "name": "Launch Agent",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "realtime_agent.main",
+            "args": [
+                "agent",
+                "--channel_name", "test_channel"
+            ],
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}
