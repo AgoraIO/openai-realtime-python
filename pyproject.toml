@@ -1,0 +1,13 @@
+[project]
+name = "realtimeapi_public"
+version = "0.0.1"
+dependencies = []
+
+[tool.oaipkg]
+monorepo-dependencies = []
+compliance-policies = ["b2b-products"]
+
+
+
+[tool.setuptools.packages.find]
+include = ["realtimeapi_public*"]
