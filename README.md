@@ -40,9 +40,8 @@ Before running the demo, ensure you have the following installed and configured:
 
 ## Organization of this Repo
 
-- `realtimeAgent/realtimeapi` contains the Python package for the Realtime API, which may eventually be part of `openai-python` or included as a vendor.
-- `realtimeAgent/agora` contains the Agora Python RTC SDK API.
-- `realtimeAgent/agent.py` contains a demo agent that uses `realtimeapi` and `realtimeAgent/agora` to build a simple app.
+- `realtimeAgent/realtime` contains the Python implementation for using Realtime API.
+- `realtimeAgent/agent.py` contains a demo agent that uses `realtime` and [agora-realtime-api-ai](https://pypi.org/project/agora-realtime-ai-api/) to build a simple app.
 
 ## Run the Demo
 
