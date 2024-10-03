@@ -190,7 +190,7 @@ class RealtimeKitAgent:
             raise
 
     async def rtc_to_model(self) -> None:
-        if self.subscribe_user is None:
+        while self.subscribe_user is None or self.channel.get_audio_frames(self.subscribe_user) is None:
             await asyncio.sleep(0.1)
 
         audio_frames = self.channel.get_audio_frames(self.subscribe_user)
