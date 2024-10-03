@@ -11,7 +11,7 @@ from attr import dataclass
 from agora_realtime_ai_api.rtc import Channel, ChatMessage, RtcEngine, RtcOptions
 
 from .logger import setup_logger
-from .realtime.struct import InputAudioBufferCommitted, InputAudioBufferSpeechStarted, InputAudioBufferSpeechStopped, ItemCreated, RateLimitsUpdated, ResponseAudioDelta, ResponseAudioDone, ResponseAudioTranscriptDelta, ResponseAudioTranscriptDone, ResponseContentPartAdded, ResponseContentPartDone, ResponseCreated, ResponseDone, ResponseOutputItemAdded, ResponseOutputItemDone, ServerVADUpdateParams, SessionUpdate, SessionUpdateParams, SessionUpdated, Voices, to_json
+from .realtime.struct import InputAudioBufferCommitted, InputAudioBufferSpeechStarted, InputAudioBufferSpeechStopped, InputAudioTranscription, ItemCreated, ItemInputAudioTranscriptionCompleted, RateLimitsUpdated, ResponseAudioDelta, ResponseAudioDone, ResponseAudioTranscriptDelta, ResponseAudioTranscriptDone, ResponseContentPartAdded, ResponseContentPartDone, ResponseCreated, ResponseDone, ResponseOutputItemAdded, ResponseOutputItemDone, ServerVADUpdateParams, SessionUpdate, SessionUpdateParams, SessionUpdated, Voices, to_json
 from .realtime.connection import RealtimeApiConnection
 from .tools import ClientToolCallResponse, ToolContext
 from .utils import PCMWriter
@@ -102,6 +102,7 @@ class RealtimeKitAgent:
                             modalities=["text", "audio"],
                             temperature=0.8,
                             max_response_output_tokens="inf",
+                            input_audio_transcription=InputAudioTranscription(model="whisper-1")
                         )
                     )
                 )
@@ -190,7 +191,7 @@ class RealtimeKitAgent:
             raise
 
     async def rtc_to_model(self) -> None:
-        if self.subscribe_user is None:
+        while self.subscribe_user is None or self.channel.get_audio_frames(self.subscribe_user) is None:
             await asyncio.sleep(0.1)
 
         audio_frames = self.channel.get_audio_frames(self.subscribe_user)
@@ -242,7 +243,7 @@ class RealtimeKitAgent:
                     # logger.info("Received audio message")
                     self.audio_queue.put_nowait(base64.b64decode(message.delta))
                     # loop.call_soon_threadsafe(self.audio_queue.put_nowait, base64.b64decode(message.delta))
-                    logger.info(f"TMS:ResponseAudioDelta: response_id:{message.response_id},item_id: {message.item_id}")
+                    logger.debug(f"TMS:ResponseAudioDelta: response_id:{message.response_id},item_id: {message.item_id}")
                 case ResponseAudioTranscriptDelta():
                     # logger.info(f"Received text message {message=}")
                     asyncio.create_task(self.channel.chat.send_message(
@@ -267,6 +268,13 @@ class RealtimeKitAgent:
                 case InputAudioBufferSpeechStopped():
                     logger.info(f"TMS:InputAudioBufferSpeechStopped: item_id: {message.item_id}")
                     pass
+                case ItemInputAudioTranscriptionCompleted():
+                    logger.info(f"ItemInputAudioTranscriptionCompleted: {message=}")
+                    asyncio.create_task(self.channel.chat.send_message(
+                        ChatMessage(
+                            message=to_json(message), msg_id=message.item_id
+                        )
+                    ))
                 #  InputAudioBufferCommitted
                 case InputAudioBufferCommitted():
                     pass
