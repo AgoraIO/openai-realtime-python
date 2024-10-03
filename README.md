@@ -86,6 +86,8 @@ This api starts an agent with given graph and override properties. The started a
 | ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | channel_name | (string) channel name, it needs to be the same with the one your browser/device joins, agent needs to stay with your browser/device in the same channel to communicate |
 | uid          | (int)the uid which ai agent use to join                                                                                                                                |
+| system_instruction    | The system instruction for the agent                                                                                                                          |
+| voice        | The voice of the agent                                                                                                                                                 |
 
 Example:
 
