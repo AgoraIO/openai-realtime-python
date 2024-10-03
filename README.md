@@ -22,7 +22,7 @@ Before running the demo, ensure you have the following installed and configured:
 
   - On macOS:
     ```bash
-    brew install ffmpeg
+    brew install ffmpeg portaudio
     ```
   - On Ubuntu (verified on versions 22.04 & 24.04):
     ```bash
@@ -40,8 +40,9 @@ Before running the demo, ensure you have the following installed and configured:
 
 ## Organization of this Repo
 
-- `realtimeAgent/realtime` contains the Python implementation for using Realtime API.
-- `realtimeAgent/agent.py` contains a demo agent that uses `realtime` and [agora-realtime-api-ai](https://pypi.org/project/agora-realtime-ai-api/) to build a simple app.
+- `realtimeAgent/realtime` contains the Python implementation for interacting with the Realtime API.
+- `realtimeAgent/agent.py` includes a demo agent that leverages the `realtime` module and the [agora-realtime-ai-api](https://pypi.org/project/agora-realtime-ai-api/) package to build a simple application.
+- `realtimeAgent/main.py` provides a web server that allows clients to start and stop AI-driven agents.
 
 ## Run the Demo
 
@@ -65,27 +66,29 @@ Before running the demo, ensure you have the following installed and configured:
    ```
 
 ### Start HTTP Server
+
 1. Run the http server to start demo agent via restful service
    ```bash
    python -m realtime_agent.main server
    ```
-The server provides a simple layer for managing agent processes.
+   The server provides a simple layer for managing agent processes.
 
 ### API Resources
 
-  - [POST /start](#post-start)
-  - [POST /stop](#post-stop)
-
+- [POST /start](#post-start)
+- [POST /stop](#post-stop)
 
 ### POST /start
+
 This api starts an agent with given graph and override properties. The started agent will join into the specified channel, and subscribe to the uid which your browser/device's rtc use to join.
 
-| Param    | Description |
-| -------- | ------- |
-| channel_name | channel name, it needs to be the same with the one your browser/device joins, agent needs to stay with your browser/device in the same channel to communicate  |
-| uid    | the uid which ai agent use to join    |
+| Param        | Description                                                                                                                                                            |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| channel_name | (string) channel name, it needs to be the same with the one your browser/device joins, agent needs to stay with your browser/device in the same channel to communicate |
+| uid          | (int)the uid which ai agent use to join                                                                                                                                |
 
 Example:
+
 ```bash
 curl 'http://localhost:8080/start_agent' \
   -H 'Content-Type: application/json' \
@@ -96,13 +99,15 @@ curl 'http://localhost:8080/start_agent' \
 ```
 
 ### POST /stop
+
 This api stops the agent you started
 
-| Param    | Description |
-| -------- | ------- |
-| channel_name | channel name, the one you used to start the agent  |
+| Param        | Description                                                |
+| ------------ | ---------------------------------------------------------- |
+| channel_name | (string) channel name, the one you used to start the agent |
 
 Example:
+
 ```bash
 curl 'http://localhost:8080/stop_agent' \
   -H 'Content-Type: application/json' \
@@ -113,4 +118,4 @@ curl 'http://localhost:8080/stop_agent' \
 
 ### Front-End for Testing
 
-Use Agora's [Voice Call Demo](https://webdemo.agora.io/basicVoiceCall/index.html)
+To test agents, use Agora's [Voice Call Demo](https://webdemo.agora.io/basicVoiceCall/index.html).
