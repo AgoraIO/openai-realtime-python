@@ -149,6 +149,11 @@ class RealtimeKitAgent:
                         exc_info=t.exception(),
                     )
 
+            def on_stream_message(agora_local_user, user_id, stream_id, data, length) -> None:
+                logger.info(f"Received stream message with length: {length}")
+
+            self.channel.on("stream_message", on_stream_message)
+
             logger.info("Waiting for remote user to join")
             self.subscribe_user = await wait_for_remote_user(self.channel)
             logger.info(f"Subscribing to user {self.subscribe_user}")
