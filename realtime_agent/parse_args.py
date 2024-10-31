@@ -25,6 +25,7 @@ def parse_args():
     agent_parser = subparsers.add_parser("agent", help="Run an agent")
     agent_parser.add_argument("--channel_name", required=True, help="Channel Id / must")
     agent_parser.add_argument("--uid", type=int, default=0, help="User Id / default is 0")
+    agent_parser.add_argument("--voice", type=str, default="alloy", help="Voice to use / default is alloy")
 
     return parser.parse_args()
 
@@ -34,7 +35,7 @@ def parse_args_realtimekit() -> RealtimeKitOptions:
     logger.info(f"Parsed arguments: {args}")
 
     if args.action == "agent":
-        options: RealtimeKitOptions = {"channel_name": args.channel_name, "uid": args.uid}
+        options: RealtimeKitOptions = {"channel_name": args.channel_name, "uid": args.uid, "voice": args.voice}
         return options
 
     return None
