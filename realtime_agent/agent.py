@@ -92,8 +92,10 @@ class RealtimeKitAgent:
                         session=SessionUpdateParams(
                             # MARK: check this
                             turn_detection=inference_config.turn_detection,
-                            tools=tools.model_description() if tools else [],
-                            tool_choice="auto",
+                            # tools=tools.model_description() if tools else [],
+                            # tool_choice="auto",
+                            tools=[],
+                            tool_choice="none",
                             input_audio_format="pcm16",
                             output_audio_format="pcm16",
                             instructions=inference_config.system_message,
