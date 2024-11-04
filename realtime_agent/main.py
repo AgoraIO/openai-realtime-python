@@ -284,7 +284,7 @@ if __name__ == "__main__":
             system_message=system_message,
             voice=realtime_kit_options["voice"],
             turn_detection=ServerVADUpdateParams(
-                type="server_vad", threshold=0.5, prefix_padding_ms=300, silence_duration_ms=200
+                type="server_vad", threshold=0.5, prefix_padding_ms=200, silence_duration_ms=1000
             ),
         )
         run_agent_in_process(
