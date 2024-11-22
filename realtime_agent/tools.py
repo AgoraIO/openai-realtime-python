@@ -24,11 +24,9 @@ class LocalFunctionToolDeclaration:
     def model_description(self) -> dict[str, Any]:
         return {
             "type": "function",
-            "function": {
-                "name": self.name,
-                "description": self.description,
-                "parameters": self.parameters,
-            },
+            "name": self.name,
+            "description": self.description,
+            "parameters": self.parameters,
         }
 
 
@@ -43,11 +41,9 @@ class PassThroughFunctionToolDeclaration:
     def model_description(self) -> dict[str, Any]:
         return {
             "type": "function",
-            "function": {
-                "name": self.name,
-                "description": self.description,
-                "parameters": self.parameters,
-            },
+            "name": self.name,
+            "description": self.description,
+            "parameters": self.parameters,
         }
 
 

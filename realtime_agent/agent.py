@@ -11,7 +11,7 @@ from attr import dataclass
 from agora_realtime_ai_api.rtc import Channel, ChatMessage, RtcEngine, RtcOptions
 
 from .logger import setup_logger
-from .realtime.struct import InputAudioBufferCommitted, InputAudioBufferSpeechStarted, InputAudioBufferSpeechStopped, InputAudioTranscription, ItemCreated, ItemInputAudioTranscriptionCompleted, RateLimitsUpdated, ResponseAudioDelta, ResponseAudioDone, ResponseAudioTranscriptDelta, ResponseAudioTranscriptDone, ResponseContentPartAdded, ResponseContentPartDone, ResponseCreated, ResponseDone, ResponseOutputItemAdded, ResponseOutputItemDone, ServerVADUpdateParams, SessionUpdate, SessionUpdateParams, SessionUpdated, Voices, to_json
+from .realtime.struct import FunctionCallOutputItemParam, InputAudioBufferCommitted, InputAudioBufferSpeechStarted, InputAudioBufferSpeechStopped, InputAudioTranscription, ItemCreate, ItemCreated, ItemInputAudioTranscriptionCompleted, RateLimitsUpdated, ResponseAudioDelta, ResponseAudioDone, ResponseAudioTranscriptDelta, ResponseAudioTranscriptDone, ResponseContentPartAdded, ResponseContentPartDone, ResponseCreate, ResponseCreated, ResponseDone, ResponseFunctionCallArgumentsDelta, ResponseFunctionCallArgumentsDone, ResponseOutputItemAdded, ResponseOutputItemDone, ServerVADUpdateParams, SessionUpdate, SessionUpdateParams, SessionUpdated, Voices, to_json
 from .realtime.connection import RealtimeApiConnection
 from .tools import ClientToolCallResponse, ToolContext
 from .utils import PCMWriter
@@ -240,6 +240,21 @@ class RealtimeKitAgent:
             await pcm_writer.flush()
             raise  # Re-raise the cancelled exception to properly exit the task
 
+    async def handle_funtion_call(self, message: ResponseFunctionCallArgumentsDone) -> None:
+        function_call_response = await self.tools.execute_tool(message.name, message.arguments)
+        logger.info(f"Function call response: {function_call_response}")
+        await self.connection.send_request(
+            ItemCreate(
+                item = FunctionCallOutputItemParam(
+                    call_id=message.call_id,
+                    output=function_call_response.json_encoded_output
+                )
+            )
+        )
+        await self.connection.send_request(
+            ResponseCreate()
+        )
+
     async def _process_model_messages(self) -> None:
         async for message in self.connection.listen():
             # logger.info(f"Received message {message=}")
@@ -312,5 +327,12 @@ class RealtimeKitAgent:
                     pass
                 case RateLimitsUpdated():
                     pass
+                case ResponseFunctionCallArgumentsDone():
+                    asyncio.create_task(
+                        self.handle_funtion_call(message)
+                    )
+                case ResponseFunctionCallArgumentsDelta():
+                    pass
+
                 case _:
                     logger.warning(f"Unhandled message {message=}")
