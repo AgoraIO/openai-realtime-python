@@ -107,7 +107,7 @@ class RealtimeApiConnection:
             return parse_server_message(message)
         except Exception as e:
             logger.error("Error handling message: " + str(e))
-            raise e
+            #raise e
 
     async def close(self):
         # Close the websocket connection if it exists
