@@ -1,6 +1,6 @@
 # Realtime Agent
 
-This project demonstrates how to deliver ultra-low latency access to OpenAI with exceptional audio quality using Agora's SD-RTN and OpenAI's Realtime API. By integrating Agora's SDK with OpenAI's Realtime API, it ensures seamless performance and minimal delay across the globe.
+This project demonstrates how to deliver ultra-low latency access to OpenAI with exceptional audio quality using Agora's SDRTN® and OpenAI's Realtime API. By integrating Agora's SDK with OpenAI's Realtime API, it ensures seamless performance and minimal delay across the globe.
 
 ## Prerequisites
 
